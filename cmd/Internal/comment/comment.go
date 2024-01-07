@@ -42,7 +42,10 @@ func NewService(store Store) *Service {
 // GetComment - which gets comment based on Id
 func (s *Service) GetComment(ctx context.Context, id string) (Comment, error) {
 	fmt.Println("Retriving Cooment Based on Id")
+	ctx = context.WithValue(ctx, "request_id", "unique-string")
+	fmt.Println(ctx.Value("request_id"))
 	cmt, err := s.Store.GetComment(ctx, id)
+
 	if err != nil {
 		fmt.Println(err)
 		return Comment{}, ErrorFetchingComment
