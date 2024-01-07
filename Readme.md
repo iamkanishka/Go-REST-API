@@ -9,7 +9,7 @@ Well be building comments REST API with crud Operation(GET, READ, POST and DELET
 * task
 
 ## Project Architecture 
-![Alt text](image.png)
+![Alt text](finalImage.png)
 
 Now the way we're going to architect our application is we're going to define a series of layers
 
