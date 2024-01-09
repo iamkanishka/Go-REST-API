@@ -1,11 +1,28 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"fmt"
 
-//Run is responsible for instantiating and
-//Startup of our Application
+	"github.com/kanishkanaik/go-rest-api-course/cmd/Internal/db"
+)
+
+// Run is responsible for instantiating and
+// Startup of our Application
 func Run() error {
-	fmt.Println("Starting up our AAplication")
+	db, err := db.NewDatabase()
+	if err != nil {
+		fmt.Println("Failed to Connect Database", err)
+
+		return err
+	}
+
+	if err := db.Ping(context.Background()); err != nil {
+		return err
+	}
+
+	fmt.Println("Succefully Connected and pinged to DB")
+
 	return nil
 }
 
