@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/kanishkanaik/go-rest-api-course/cmd/Internal/comment"
 	"github.com/kanishkanaik/go-rest-api-course/cmd/Internal/db"
 )
 
@@ -23,6 +25,9 @@ func Run() error {
 		fmt.Println("Failed to Migrate Databases")
 		return err
 	}
+
+	cmtService := comment.NewService(db)
+	fmt.Println(cmtService.GetComment(context.Background(), "0247c30c-9b9f-4192-8f74-5a7660308552"))
 
 	fmt.Println("Succefully Connected and pinged to DB")
 
