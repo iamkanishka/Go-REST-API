@@ -8,6 +8,8 @@ import (
 
 var (
 	ErrorFetchingComment = errors.New("Failed to Fetch comment by Id")
+	ErrorCreatingComment = errors.New("Failed to Create comment by Id")
+	ErrorUpdatingComment = errors.New("Failed to Update comment by Id")
 	ErrorNotImplemented  = errors.New("Method not Implemented")
 )
 
@@ -24,6 +26,9 @@ type Comment struct {
 // methods that out service needs to operate
 type Store interface {
 	GetComment(context.Context, string) (Comment, error)
+	PostComment(context.Context, Comment) (Comment, error)
+	DeleteComment(context.Context, string) error
+	UpdateComment(context.Context, Comment, string) (Comment, error)
 }
 
 // Service - a struct on whcih all our logic
@@ -54,14 +59,26 @@ func (s *Service) GetComment(ctx context.Context, id string) (Comment, error) {
 
 }
 
-func (s *Service) UpdateComment(ctx context.Context, id string, cmt Comment) (Comment, error) {
-	return Comment{}, ErrorNotImplemented
+func (s *Service) UpdateComment(ctx context.Context, updatedComment Comment, id string) (Comment, error) {
+	fmt.Println("Updating Comment")
+	cmt, err := s.Store.UpdateComment(ctx, updatedComment, id)
+	if err != nil {
+		return Comment{}, ErrorUpdatingComment
+	}
+
+	return cmt, nil
 }
 
-func (s *Service) DeleteComment(ctx context.Context, id string) (Comment, error) {
-	return Comment{}, ErrorNotImplemented
+func (s *Service) DeleteComment(ctx context.Context, id string) error {
+	return s.Store.DeleteComment(ctx, id)
 }
 
-func (s *Service) CreateComment(ctx context.Context, cmt Comment) (Comment, error) {
-	return Comment{}, ErrorNotImplemented
+func (s *Service) PostComment(ctx context.Context, cmt Comment) (Comment, error) {
+	cmt, err := s.Store.PostComment(ctx, cmt)
+
+	if err != nil {
+		fmt.Println(err)
+		return Comment{}, ErrorCreatingComment
+	}
+	return cmt, nil
 }
