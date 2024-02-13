@@ -1,13 +1,14 @@
 package http
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"time"
+
+	// "context"
+	// "os"
+	// "os/signal"
+	// "time"
 
 	"github.com/gorilla/mux"
 )
@@ -26,6 +27,8 @@ func NewHandler(service CommentService) *Handler {
 	h.Router = mux.NewRouter()
 	h.mapRoutes()
 	h.Router.Use(JSONMIddleware)
+	h.Router.Use(LoggingMiddleware)
+	h.Router.Use(TimeoutMiddleware)
 
 	h.Server = &http.Server{
 		Addr:    "0.0.0.0:8080",
@@ -55,15 +58,15 @@ func (h *Handler) Serve() error {
 
 	}()
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	<-c
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c, os.Interrupt)
+	// <-c
 
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-	h.Server.Shutdown(ctx)
+	// ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	// defer cancel()
+	// h.Server.Shutdown(ctx)
 
-	log.Println("shut down gracefully")
+	// log.Println("shut down gracefully")
 
 	return nil
 
