@@ -1,14 +1,13 @@
 package http
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
-
-	// "context"
-	// "os"
-	// "os/signal"
-	// "time"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -43,7 +42,7 @@ func (h *Handler) mapRoutes() {
 		fmt.Fprintf(w, "Hello world")
 	})
 
-	h.Router.HandleFunc("/api/v1/comment", h.PostComment).Methods("POST")
+	h.Router.HandleFunc("/api/v1/comment", JWTAuth(h.PostComment)).Methods("POST")
 	h.Router.HandleFunc("/api/v1/comment/{id}", h.GetComment).Methods("GET")
 	h.Router.HandleFunc("/api/v1/comment/{id}", h.UpdateComment).Methods("PUT")
 	h.Router.HandleFunc("/api/v1/comment/{id}", h.DeleteComment).Methods("DELETE")
@@ -58,16 +57,20 @@ func (h *Handler) Serve() error {
 
 	}()
 
-	// c := make(chan os.Signal, 1)
-	// signal.Notify(c, os.Interrupt)
-	// <-c
-
-	// ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	// defer cancel()
-	// h.Server.Shutdown(ctx)
-
-	// log.Println("shut down gracefully")
+	GraceFullShutDown(h)
 
 	return nil
 
+}
+
+func GraceFullShutDown(h *Handler) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	h.Server.Shutdown(ctx)
+
+	log.Println("shut down gracefully")
 }

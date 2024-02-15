@@ -42,6 +42,7 @@ func (d *Database) GetComment(ctx context.Context, uuid string) (comment.Comment
 }
 
 func (d *Database) PostComment(ctx context.Context, cmt comment.Comment) (comment.Comment, error) {
+	fmt.Println(cmt)
 	cmt.ID = uuid.NewV4().String()
 	postRow := CommentRow{
 		ID:     cmt.ID,
